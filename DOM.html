@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Post Gallery</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .controls { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .card { border: 2px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    .green { border-color: green; }
+    .orange { border-color: orange; }
+    .red { border-color: red; }
+  </style>
+</head>
+<body>
+  <h2>📬 Post Gallery</h2>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search by title..." />
+    <select id="userFilter">
+      <option value="">All Users</option>
+      ${[...Array(10).keys()].map(i => `<option value="${i + 1}">User ${i + 1}</option>`).join('')}
+    </select>
+    <select id="sort">
+      <option value="">Sort by</option>
+      <option value="titleAsc">Title A-Z</option>
+      <option value="titleDesc">Title Z-A</option>
+      <option value="idAsc">ID Ascending</option>
+      <option value="idDesc">ID Descending</option>
+    </select>
+  </div>
+
+  <div id="postContainer"></div>
+
+  <script>
+    const postContainer = document.getElementById("postContainer");
+    const searchInput = document.getElementById("search");
+    const userFilter = document.getElementById("userFilter");
+    const sortSelect = document.getElementById("sort");
+
+    let allPosts = [];
+
+    const getBorderClass = (userId) => {
+      if (userId <= 3) return "green";
+      if (userId <= 7) return "orange";
+      return "red";
+    };
+
+    const renderPosts = (posts) => {
+      postContainer.innerHTML = "";
+
+      if (posts.length === 0) {
+        postContainer.innerHTML = "<p>No posts found for the current criteria.</p>";
+        return;
+      }
+
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = `card ${getBorderClass(post.userId)}`;
+        div.innerHTML = `
+          <h4>${post.title}</h4>
+          <p>${post.body}</p>
+          <small>User ID: ${post.userId} | Post ID: ${post.id}</small>
+        `;
+        postContainer.appendChild(div);
+      });
+    };
+
+    const applyFilters = () => {
+      let filtered = [...allPosts];
+
+      const searchText = searchInput.value.toLowerCase();
+      if (searchText) {
+        filtered = filtered.filter(post =>
+          post.title.toLowerCase().includes(searchText)
+        );
+      }
+
+      const userId = userFilter.value;
+      if (userId) {
+        filtered = filtered.filter(post => post.userId == userId);
+      }
+
+      const sortValue = sortSelect.value;
+      if (sortValue === "titleAsc") {
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortValue === "titleDesc") {
+        filtered.sort((a, b) => b.title.localeCompare(a.title));
+      } else if (sortValue === "idAsc") {
+        filtered.sort((a, b) => a.id - b.id);
+      } else if (sortValue === "idDesc") {
+        filtered.sort((a, b) => b.id - a.id);
+      }
+
+      renderPosts(filtered);
+    };
+
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then(res => res.json())
+      .then(data => {
+        allPosts = data.slice(0, 50); // First 50 posts
+        renderPosts(allPosts);
+      });
+
+    searchInput.addEventListener("input", applyFilters);
+    userFilter.addEventListener("change", applyFilters);
+    sortSelect.addEventListener("change", applyFilters);
+  </script>
+</body>
+</html>
