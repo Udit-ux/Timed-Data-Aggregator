@@ -27,5 +27,5 @@ const avgSessionDuration = (totalDuration / totalSessions);
 setTimeout(() => {
   console.log("Total Duration Per User:", totalDurationPerUser);
   console.log("Active Users (>5 min):", activeUsers);
-  console.log("Avg Session Duration:", `${avgSessionDuration} mins`);
+  console.log("Avg Session Duration:", avgSessionDuration);
 }, 2000);
