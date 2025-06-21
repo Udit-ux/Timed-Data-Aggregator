@@ -9,7 +9,7 @@ const logs = [
 
 // 1. Compute total duration spent by each user (e.g., Alice → 7)
 const totalDurationPerUser = logs.reduce((acc, log) => {
-  acc[log.user] = (acc[log.user] || 0) + log.duration;
+  acc[log.user] = acc[log.user] + log.duration;
   return acc;
 });
 
