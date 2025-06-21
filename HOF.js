@@ -11,7 +11,7 @@ const logs = [
 const totalDurationPerUser = logs.reduce((acc, log) => {
   acc[log.user] = (acc[log.user] || 0) + log.duration;
   return acc;
-}, {});
+});
 
 // 2. Identify users who spent more than 5 minutes total
 const activeUsers = Object.entries(totalDurationPerUser)
@@ -21,7 +21,7 @@ const activeUsers = Object.entries(totalDurationPerUser)
 // 3. Compute average session duration
 const totalSessions = logs.length;
 const totalDuration = logs.reduce((sum, log) => sum + log.duration, 0);
-const avgSessionDuration = (totalDuration / totalSessions).toFixed(2);
+const avgSessionDuration = (totalDuration / totalSessions);
 
 // After 2 sec log
 setTimeout(() => {
